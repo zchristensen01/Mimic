@@ -182,9 +182,9 @@ Install in this order. Everything is free.
 ### Build — the repository, which already exists
 
 **The skeleton is already there.** It was scaffolded and pushed before you started: the directory
-tree, a licence, `CHANGELOG.md`, `.gitignore`, `.gitattributes`, `.editorconfig`, a
-GitHub Action, a README in every folder saying what belongs in it, and the Stage 0 PlatformIO project
-with every class declared and every body left as a TODO for the session that writes it.
+tree, a licence, `CHANGELOG.md`, `.gitignore`, `.gitattributes`, `.editorconfig`, `.clang-format`,
+a GitHub Action, a README in every folder saying what belongs in it, and the Stage 0 PlatformIO
+project with every class declared and every body left as a TODO for the session that writes it.
 
 **Nothing was scaffolded that records a decision, a measurement or a session**, and that is the line
 the scaffolding was drawn on. There are no ADR stubs, no session notes and no tuning files, because
@@ -219,9 +219,10 @@ go and read that line if the one-liner is not enough.
 | `hardware/wiring/` | A dated photograph of every wiring change. Hardware has no `git diff` | *Before You Build*, Part III |
 | `hardware/cad/` | STEP exports and native source. Empty until Stage 2 | *Before You Build*, Part III |
 | `hardware/bom.md` | What is actually on the bench, as opposed to what was ordered | *Before You Build*, Part III |
-| `tools/` | `capture.py` and `plot.py`, both stubs. You write them in S7 | This workbook, S7 |
+| `tools/` | `capture.py` and `plot.py`, both stubs. You write them in S7. `requirements.txt` says which versions they were written against | This workbook, S7 |
 | `CHANGELOG.md` | One entry per exit-gate tag, written **before** the tag is pushed | *Before You Build*, Part III |
 | `.github/workflows/ci.yml` | Builds the firmware on every push. The `pio test` line is commented out until S12 | This workbook, "Repository additions" |
+| `.clang-format` | How your C++ is laid out. One file, so every editor and every machine agrees | *Before You Build*, Part IV → "Line endings" |
 | `.website-capture.md` | The capture tracker. **Gitignored** — a to-do list about the build, not a record of it | *Before You Build*, Part III → "At the end of every session" |
 
 Every folder in that table that can hold your work has a `README.md` in it saying what belongs there

@@ -65,11 +65,13 @@ Commits, branches and tags follow the scheme in
 
 ## Building
 
-```
+```bash
 # Stage 0 firmware
 pio run -e uno -d firmware/stage0-uno
 
-# Stage 0 host-side unit tests (no board required)
+# Stage 0 host-side unit tests, no board required. Not usable until S12: the
+# classes are declarations with no bodies yet, so this environment has nothing
+# to build. CI builds the firmware only, for the same reason.
 pio test -e native -d firmware/stage0-uno
 ```
 

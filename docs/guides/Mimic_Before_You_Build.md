@@ -276,6 +276,11 @@ newline, trailing whitespace, line length. Understood by VS Code, CubeIDE and mo
 different layer from `.gitattributes`, which governs what lands in the *repository* — one prevents
 the problem, the other catches it at commit time, and you want both.
 
+**`.clang-format`** — A file declaring how your *C and C++* should be laid out: where the braces go,
+how far a continuation indents, how a long parameter list breaks. `.editorconfig` sets the tab width
+for every file type and stops there; `.clang-format` knows the language, and one keystroke reformats
+a file to match. Part IV says why it is worth having on day one rather than at Stage 1.
+
 ### Words about control
 
 **Control loop** — Code that runs at a fixed rate and each time reads where the motor actually is,
@@ -1411,11 +1416,12 @@ showing.
   │   ├── guides/                  # this document set, committed alongside the work it describes
   │   ├── motor-spec.md            # your measured motor constants
   │   └── protocol.md              # your CAN message spec
-  ├── tools/                       # capture.py, plot.py, kinematics.py
+  ├── tools/                       # capture.py, plot.py, kinematics.py, requirements.txt
   ├── .github/workflows/ci.yml     # builds the firmware on every push
   ├── .gitignore
   ├── .gitattributes               # LFS tracking — set up on day one
   ├── .editorconfig                # what your EDITOR writes. A different layer
+  ├── .clang-format                # what the FORMATTER writes. The C++ layer
   ├── .website-capture.md          # the capture tracker. Gitignored, never committed
   ├── LICENSE
   ├── CHANGELOG.md                 # one entry per exit-gate tag
@@ -1660,38 +1666,49 @@ lose the Arduino IDE's one genuine advantage, which is that it works before you 
 
 ```ini
 [platformio]
-default_envs = uno            ; which env runs when you do not name one
+default_envs = uno                ; which env runs when you do not name one
 
-[env]                         ; settings shared by EVERY environment below
-build_flags = -Wall -Wextra   ; extra compiler warnings, on by choice
+[env]                             ; settings shared by EVERY environment below
+build_flags = -Wall -Wextra       ; extra compiler warnings, on by choice
 
 [env:uno]
-platform      = atmelavr      ; the CHIP FAMILY toolchain. Which compiler, which
-                              ;   uploader, which register definitions.
-board         = uno           ; the specific BOARD. Sets the exact chip, the clock
-                              ;   speed, the flash and RAM sizes, and the upload
-                              ;   protocol. platform is the family; board is the part.
-framework     = arduino       ; the API layer you write against. `arduino` gives you
-                              ;   pinMode, digitalWrite, Serial and the core that
-                              ;   defines main() for you. Omit it and you are bare
-                              ;   metal, which is where Stage 1 goes deliberately.
-monitor_speed = 250000        ; baud rate `pio device monitor` opens at. It must match
-                              ;   your Serial.begin(). 250000 rather than 115200 is
-                              ;   derived in Stage 0 S7 and it is not arbitrary.
+platform      = atmelavr@^5.3.0   ; the CHIP FAMILY toolchain. Which compiler, which
+                                  ;   uploader, which register definitions. The @ pins
+                                  ;   which version of it you get.
+board         = uno               ; the specific BOARD. Sets the exact chip, the clock
+                                  ;   speed, the flash and RAM sizes, and the upload
+                                  ;   protocol. platform is the family; board is the part.
+framework     = arduino           ; the API layer you write against. `arduino` gives you
+                                  ;   pinMode, digitalWrite, Serial and the core that
+                                  ;   defines main() for you. Omit it and you are bare
+                                  ;   metal, which is where Stage 1 goes deliberately.
+monitor_speed = 250000            ; baud rate `pio device monitor` opens at. It must match
+                                  ;   your Serial.begin(). 250000 rather than 115200 is
+                                  ;   derived in Stage 0 S7 and it is not arbitrary.
 
 [env:native]
-platform       = native       ; no cross-compiler at all — build for THIS machine
-test_framework = unity        ; which unit-test framework `pio test` should expect
+platform       = native@^1.2.1    ; no cross-compiler at all — build for THIS machine
+test_framework = unity            ; which unit-test framework `pio test` should expect
 build_flags    = -std=c++17 -I include
 ```
 
-Four of those deserve a sentence more than they look like they need.
+Five of those deserve a sentence more than they look like they need.
 
 **`platform` versus `board`.** `platform` chooses a whole toolchain — the compiler that targets AVR
 chips, the tool that talks to their bootloader, the headers that define `TCCR1B`. `board` picks one
 part within it and fills in the specifics: 16 MHz, 32 KB of flash, 2 KB of RAM, `avrdude` over
 serial at a particular baud. Getting `board` wrong compiles fine and produces an image for the wrong
 chip.
+
+**The `@` in `atmelavr@^5.3.0`.** Write `platform = atmelavr` on its own and you have asked for
+*whatever version is newest on the day the line is read* — and it is read again every time somebody
+builds from a clean checkout, which is exactly what the CI runner does. You resolve it once in
+August; a runner resolves it again in March and can get a different compiler. `^5.3.0` means 5.3.0 or
+newer but not 6, so fixes still reach you and the breaking change does not. It is the same compromise
+the Actions chapter makes with `actions/checkout@v5`, applied to the layer underneath. The failure it
+prevents is a quiet one: not a broken build, but a build you did not change, warning about something
+it did not warn about last month, in code you have not touched since. That is a long evening, and the
+cure is seven characters.
 
 **`framework`.** This is the honest name for what Arduino is: a **hardware abstraction layer plus a
 core**. It supplies `main()` — which then calls your `setup()` once and your `loop()` forever — and
@@ -1864,6 +1881,18 @@ installing Git, and why the fix, if you get it wrong, is to correct the setting 
 > the problem happening. Note the entry in this repository's file exempting `docs/guides/*.md` from
 > trimming and wrapping, because these documents' figures are drawn to the column and a reflow
 > destroys them silently.
+
+> **DEFINITION** — **`.clang-format`, and the layer below that again.** `.editorconfig` can say that
+> a C++ file indents by two spaces. It cannot say where the brace goes, how a wrapped `if` condition
+> lines up under its opening bracket, or how a parameter list breaks when it runs past the margin,
+> because it does not parse the language. `.clang-format` does: it is a formatter that reads the code
+> properly and rewrites the whitespace, it ships with the C/C++ extension in VS Code and as a
+> standalone binary, and the style lives in one file at the repository root so every machine agrees
+> without anybody remembering anything. **Have it before the first real function rather than after.**
+> Adopting a formatter once a few thousand lines exist turns one small commit into a rewrite of every
+> file it touches, and a genuine change hidden inside a whole-file reflow is unreviewable — the same
+> problem as line endings, arriving the same way. Stage 1 sharpens it, because CubeMX regenerates
+> code in its own style directly on top of yours.
 
 ### Conventional Commits, and the two types this project adds
 

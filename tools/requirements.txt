@@ -1,8 +1,9 @@
 # python -m pip install -r tools/requirements.txt
 #
-# Unpinned on purpose. Pin the day a version breaks something, and say so in the
-# commit.
+# Pinned to a major version: patches and fixes still arrive, the breaking change
+# does not. Same compromise as the platform pins in platformio.ini. Raise a floor
+# when you actually need something newer, and say why in the commit.
 
-pyserial        # capture.py
-matplotlib      # plot.py
-pandas          # plot.py
+pyserial~=3.5       # capture.py
+matplotlib~=3.11    # plot.py
+pandas~=3.0         # plot.py
