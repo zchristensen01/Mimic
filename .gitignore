@@ -1,0 +1,95 @@
+# Verbatim from Before You Build, Part III. Additions go below it.
+
+# ROS 2 / colcon
+build/
+install/
+log/
+
+# PlatformIO
+.pio/
+.pioenvs/
+
+# STM32CubeIDE
+Debug/
+Release/
+*.launch
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Bag files and datasets
+*.db3
+*.mcap
+rosbag2_*/
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Extensions ───────────────────────────────────────────────────────────────
+
+# Local working files, not artifacts of the build. The capture tracker is a
+# to-do list; the handoff is a message to the website repository and goes stale
+# the moment it is read.
+.website-capture.md
+WEBSITE-HANDOFF.md
+
+# Local working notes that are not part of the published project: the agent
+# instructions, and the commit/branch/tag/ADR rules. Both stay on this machine.
+CLAUDE.md
+CONVENTIONS.md
+
+# Video. Photographs and clips go straight to the website repository, so these
+# rules exist only to stop something large arriving here by accident.
+*.mp4
+*.mov
+*.MP4
+*.MOV
+
+# CAD working files that are not the committed source or STEP export
+*.f3d.bak
+*.FCStd1
+*.FCStd[0-9]
+*.stl.bak
+
+# Embedded build output
+.clang_complete
+.gcc-flags.json
+compile_commands.json
+*.elf
+*.hex
+*.bin
+*.map
+*.o
+*.a
+
+# STM32CubeIDE. The .ioc IS committed, S1.0 requires it. Do not add it here.
+.settings/
+.metadata/
+*.bak
+
+# Python
+*.pyo
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+env/
+
+# Editors. .vscode/ is deliberately not ignored wholesale, because PlatformIO
+# writes settings there that are worth sharing.
+.vscode/ipch/
+.vscode/.browse.*
+.vscode/c_cpp_properties.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Secrets and machine-local configuration
+.env
+*.local
+secrets.*

@@ -1,0 +1,113 @@
+# Line endings and Git LFS tracking.
+#
+# Writing this file is not enough. Run `git lfs install` ONCE ON EACH MACHINE you
+# clone to, or these rules do nothing and the files go into git proper.
+
+# ── Line endings ─────────────────────────────────────────────────────────────
+# Git normalises to LF in the repository. Working-tree endings come from
+# core.autocrlf, which must be `input` on Windows and set before the first clone.
+
+*                   text=auto eol=lf
+
+*.sh                text eol=lf
+*.bash              text eol=lf
+Makefile            text eol=lf
+*.mk                text eol=lf
+
+*.bat               text eol=crlf
+*.cmd               text eol=crlf
+
+*.c                 text
+*.h                 text
+*.cpp               text
+*.hpp               text
+*.ino               text
+*.py                text
+*.md                text
+*.txt               text
+*.csv               text
+*.yml               text
+*.yaml              text
+*.json              text
+*.xml               text
+*.urdf              text
+*.xacro             text
+*.sdf               text
+*.ini               text
+*.ld                text
+*.S                 text
+
+# STM32CubeMX project file. Text, and committed: S1.0 requires it.
+*.ioc               text
+
+# Binary, never line-ending-normalised or diffed as text.
+*.png               -text
+*.jpg               -text
+*.jpeg              -text
+*.gif               -text
+*.webp              -text
+*.pdf               -text
+*.zip               -text
+*.sr                -text -diff
+*.hex               -text
+*.bin               -text
+*.elf               -text
+
+# ── Git LFS: CAD ─────────────────────────────────────────────────────────────
+
+*.step              filter=lfs diff=lfs merge=lfs -text
+*.stp               filter=lfs diff=lfs merge=lfs -text
+*.STEP              filter=lfs diff=lfs merge=lfs -text
+*.STP               filter=lfs diff=lfs merge=lfs -text
+*.stl               filter=lfs diff=lfs merge=lfs -text
+*.STL               filter=lfs diff=lfs merge=lfs -text
+*.f3d               filter=lfs diff=lfs merge=lfs -text
+*.f3z               filter=lfs diff=lfs merge=lfs -text
+*.FCStd             filter=lfs diff=lfs merge=lfs -text
+*.3mf               filter=lfs diff=lfs merge=lfs -text
+*.iges              filter=lfs diff=lfs merge=lfs -text
+*.igs               filter=lfs diff=lfs merge=lfs -text
+
+# ── Git LFS: recordings and datasets ─────────────────────────────────────────
+# These are also in .gitignore and .gitignore wins, so they never fire on their
+# own. They are the escape hatch for the day one recording IS evidence and gets
+# forced in with `git add -f`: it lands in LFS rather than in the object store.
+
+*.db3               filter=lfs diff=lfs merge=lfs -text
+*.mcap              filter=lfs diff=lfs merge=lfs -text
+*.bag               filter=lfs diff=lfs merge=lfs -text
+*.npy               filter=lfs diff=lfs merge=lfs -text
+*.npz               filter=lfs diff=lfs merge=lfs -text
+
+# ── Git LFS: large images and documents, tracked BY PATH ─────────────────────
+# Phone photographs and datasheets are megabytes each and never diff usefully,
+# so they go to LFS. Generated plots in docs/tuning/plots/ are 100-300 KB PNGs
+# and go into git proper, because opening one straight from a GitHub diff is the
+# whole point of committing them.
+#
+# Scoped by extension as well as by path, so each directory's README.md stays an
+# ordinary text file.
+
+hardware/wiring/**/*.jpg    filter=lfs diff=lfs merge=lfs -text
+hardware/wiring/**/*.jpeg   filter=lfs diff=lfs merge=lfs -text
+hardware/wiring/**/*.png    filter=lfs diff=lfs merge=lfs -text
+docs/derivations/**/*.jpg   filter=lfs diff=lfs merge=lfs -text
+docs/derivations/**/*.jpeg  filter=lfs diff=lfs merge=lfs -text
+docs/derivations/**/*.png   filter=lfs diff=lfs merge=lfs -text
+docs/derivations/**/*.pdf   filter=lfs diff=lfs merge=lfs -text
+docs/reference/**/*.pdf     filter=lfs diff=lfs merge=lfs -text
+docs/reference/**/*.jpg     filter=lfs diff=lfs merge=lfs -text
+docs/reference/**/*.jpeg    filter=lfs diff=lfs merge=lfs -text
+docs/reference/**/*.png     filter=lfs diff=lfs merge=lfs -text
+
+# Any image that lands outside those directories and is large by nature.
+*.psd               filter=lfs diff=lfs merge=lfs -text
+*.tif               filter=lfs diff=lfs merge=lfs -text
+*.tiff              filter=lfs diff=lfs merge=lfs -text
+*.heic              filter=lfs diff=lfs merge=lfs -text
+*.HEIC              filter=lfs diff=lfs merge=lfs -text
+
+# ── Diff and language behaviour ──────────────────────────────────────────────
+
+docs/guides/**      linguist-documentation
+.gitkeep            -diff

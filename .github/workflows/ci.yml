@@ -1,0 +1,33 @@
+# Proves the Stage 0 firmware compiles from a clean checkout. It does one thing.
+
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  firmware-stage0:
+    name: Build firmware/stage0-uno
+    runs-on: ubuntu-latest
+
+    steps:
+      # Pinned to a major version. Check these when a deprecation warning shows
+      # up in the log, not when the build fails: GitHub retires the Node runtime
+      # these actions run on every few years.
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Install PlatformIO
+        run: pip install --upgrade platformio
+
+      - name: Build
+        run: pio run -e uno -d firmware/stage0-uno
+
+      # TODO (S12): enable once the classes have implementations.
+      # - name: Host-side unit tests
+      #   run: pio test -e native -d firmware/stage0-uno

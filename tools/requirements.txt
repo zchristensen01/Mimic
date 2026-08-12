@@ -1,0 +1,8 @@
+# python -m pip install -r tools/requirements.txt
+#
+# Unpinned on purpose. Pin the day a version breaks something, and say so in the
+# commit.
+
+pyserial        # capture.py
+matplotlib      # plot.py
+pandas          # plot.py
