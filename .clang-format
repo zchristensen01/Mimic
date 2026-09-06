@@ -1,0 +1,17 @@
+# clang-format. Paired with .editorconfig: that file sets the indent width for
+# every file type, this one knows C++ and can say where the brace goes.
+#
+#   clang-format -i src/*.cpp include/*.h
+#
+# Width and indent match .editorconfig so the two cannot disagree.
+
+BasedOnStyle: LLVM
+IndentWidth: 2
+ColumnLimit: 100
+
+# Reference and pointer bind to the type: const JointConfig& cfg.
+PointerAlignment: Left
+
+# Include order is left alone. On an embedded target it is occasionally load
+# bearing, and a formatter is the wrong thing to find that out from.
+SortIncludes: false
